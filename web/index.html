@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blockly-Tatu transpiler</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/cupcake.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/lisp.min.js"></script>
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div id="blocklyCanvas"></div>
+        </div>
+
+        <div class="right-panel">
+            <div class="button-bar">
+                <input type="file" id="fileInput" accept=".json" style="display:none">
+                <button id="btnImport">Import JSON</button>
+                <button id="btnExport">Export JSON</button>
+                <button id="btnTranspile">Transpile</button>
+                <button id="btnExecute" disabled>Execute</button>
+                <button id="btnClear">Clear</button>
+            </div>
+
+            <div class="output-section">
+                <h3>Code</h3>
+                <div id="blocklyCode"></div>
+            </div>
+
+            <div class="output-section">
+                <h3>Input</h3>
+                <textarea id="inputVars" placeholder='{"name": "john", "age": 33}'></textarea>
+            </div>
+
+            <div class="output-section">
+                <h3>Execution Output</h3>
+                <div id="executionOutput"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/blocks.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

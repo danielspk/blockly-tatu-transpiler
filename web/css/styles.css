@@ -1,0 +1,83 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 60%;
+}
+
+.right-panel {
+    flex: 0 0 40%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.button-bar {
+    padding: 10px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
+.output-section {
+    flex: 1;
+    overflow: auto;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+.output-section:last-child {
+    border-bottom: none;
+}
+
+.output-section h3 {
+    margin: 0 0 10px 0;
+}
+
+pre {
+    border-radius: 5px;
+    max-height: 300px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+pre.output-json {
+    padding: 10px;
+    background: #fbf1f2;
+}
+
+pre.output-execution {
+    padding: 10px;
+    background: #f0f8e8;
+}
+
+pre.output-error {
+    color: red;
+}
+
+#blocklyCanvas {
+    height: 100%;
+    width: 100%;
+}
+
+#inputVars {
+    width: 100%;
+    height: calc(100% - 40px);
+    font-family: monospace;
+}
+
+#blocklyCode,
+#executionOutput {
+    white-space: pre;
+    font-family: monospace;
+    overflow-x: auto;
+}
