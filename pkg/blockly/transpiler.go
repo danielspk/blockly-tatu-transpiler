@@ -63,6 +63,14 @@ func transpileBlockInternal(block *Block, processNext bool) (string, error) {
 		return "", nil
 	}
 
+	if block.Disabled {
+		if processNext && block.Next != nil {
+			return transpileBlockInternal(block.Next, true)
+		}
+
+		return "", nil
+	}
+
 	var result string
 	var err error
 

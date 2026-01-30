@@ -9,6 +9,7 @@ type Workspace struct {
 type Block struct {
 	Type       string
 	ID         string
+	Disabled   bool
 	Comment    string
 	Fields     map[string]*Field
 	Values     map[string]*Value

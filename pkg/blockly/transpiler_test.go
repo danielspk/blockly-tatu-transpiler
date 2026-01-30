@@ -258,3 +258,75 @@ func TestTranspileBlockWithComment(t *testing.T) {
 		t.Errorf("expected %q, got %q", expected, result)
 	}
 }
+
+func TestTranspileDisabled(t *testing.T) {
+	tests := []struct {
+		name         string
+		disabledAttr string
+	}{
+		{"disabled bool", `"disabled": true`},
+		{"disabledReasons array", `"disabledReasons": ["MANUALLY_DISABLED"]`},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			jsonData := `{
+				"blocks": {
+					"languageVersion": 0,
+					"blocks": [{
+						"type": "variables_set",
+						"id": "test1",
+						"fields": {"VAR": {"id": "varX", "name": "x"}},
+						"inputs": {
+							"VALUE": {
+								"block": {"type": "math_number", "id": "num1", "fields": {"NUM": 1}}
+							}
+						},
+						"next": {
+							"block": {
+								"type": "variables_set",
+								"id": "test2",
+								` + tt.disabledAttr + `,
+								"fields": {"VAR": {"id": "varY", "name": "y"}},
+								"inputs": {
+									"VALUE": {
+										"block": {"type": "math_number", "id": "num2", "fields": {"NUM": 2}}
+									}
+								},
+								"next": {
+									"block": {
+										"type": "variables_set",
+										"id": "test3",
+										"fields": {"VAR": {"id": "varZ", "name": "z"}},
+										"inputs": {
+											"VALUE": {
+												"block": {"type": "math_number", "id": "num3", "fields": {"NUM": 3}}
+											}
+										}
+									}
+								}
+							}
+						}
+					}]
+				},
+				"variables": [
+					{"id": "varX", "name": "x"},
+					{"id": "varY", "name": "y"},
+					{"id": "varZ", "name": "z"}
+				]
+			}`
+
+			result, err := Transpile([]byte(jsonData))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			result = strings.TrimSpace(result)
+			expected := "(set x 1)\n(set z 3)"
+
+			if result != expected {
+				t.Errorf("expected %q, got %q", expected, result)
+			}
+		})
+	}
+}

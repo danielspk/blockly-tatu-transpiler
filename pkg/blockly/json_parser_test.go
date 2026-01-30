@@ -282,3 +282,44 @@ func TestNumberFormatting(t *testing.T) {
 		})
 	}
 }
+
+func TestParseParamsAsObjects(t *testing.T) {
+	jsonData := `{
+		"blocks": {
+			"languageVersion": 0,
+			"blocks": [{
+				"type": "procedures_defnoreturn",
+				"id": "proc1",
+				"extraState": {
+					"params": [
+						{"name": "arg1", "id": "id1"},
+						{"name": "arg2", "id": "id2"}
+					]
+				},
+				"fields": {"NAME": "myFunc"},
+				"inputs": {
+					"STACK": {
+						"block": {
+							"type": "text_print",
+							"id": "print1",
+							"inputs": {
+								"TEXT": {
+									"block": {"type": "text", "id": "text1", "fields": {"TEXT": "hello"}}
+								}
+							}
+						}
+					}
+				}
+			}]
+		}
+	}`
+
+	result, err := Transpile([]byte(jsonData))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !strings.Contains(result, "(def myFunc (arg1 arg2)") {
+		t.Errorf("expected function with params arg1 arg2, got: %s", result)
+	}
+}

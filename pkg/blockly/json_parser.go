@@ -23,15 +23,17 @@ type JSONVariable struct {
 
 // JSONBlock represents a block in Blockly JSON format.
 type JSONBlock struct {
-	Type       string               `json:"type"`
-	ID         string               `json:"id"`
-	X          float64              `json:"x,omitempty"`
-	Y          float64              `json:"y,omitempty"`
-	Fields     map[string]any       `json:"fields,omitempty"`
-	Inputs     map[string]JSONInput `json:"inputs,omitempty"`
-	Next       *JSONBlockWrapper    `json:"next,omitempty"`
-	ExtraState *JSONExtraState      `json:"extraState,omitempty"`
-	Icons      *JSONIcons           `json:"icons,omitempty"`
+	Type            string               `json:"type"`
+	ID              string               `json:"id"`
+	X               float64              `json:"x,omitempty"`
+	Y               float64              `json:"y,omitempty"`
+	Disabled        bool                 `json:"disabled,omitempty"`
+	DisabledReasons []string             `json:"disabledReasons,omitempty"`
+	Fields          map[string]any       `json:"fields,omitempty"`
+	Inputs          map[string]JSONInput `json:"inputs,omitempty"`
+	Next            *JSONBlockWrapper    `json:"next,omitempty"`
+	ExtraState      *JSONExtraState      `json:"extraState,omitempty"`
+	Icons           *JSONIcons           `json:"icons,omitempty"`
 }
 
 // JSONInput represents an input connection.
@@ -46,8 +48,40 @@ type JSONBlockWrapper struct {
 
 // JSONExtraState represents extra state data (mutations).
 type JSONExtraState struct {
-	Name   string   `json:"name,omitempty"`
-	Params []string `json:"params,omitempty"`
+	Name   string     `json:"name,omitempty"`
+	Params JSONParams `json:"params,omitempty"`
+}
+
+// JSONParams handles params as either []string or []{name, id} objects.
+type JSONParams []string
+
+// UnmarshalJSON handles both string array and object array formats.
+func (p *JSONParams) UnmarshalJSON(data []byte) error {
+	var strSlice []string
+
+	if err := json.Unmarshal(data, &strSlice); err == nil {
+		*p = strSlice
+		return nil
+	}
+
+	var objects []struct {
+		Name string `json:"name"`
+		ID   string `json:"id"`
+	}
+
+	if err := json.Unmarshal(data, &objects); err != nil {
+		return err
+	}
+
+	result := make([]string, len(objects))
+
+	for i, obj := range objects {
+		result[i] = obj.Name
+	}
+
+	*p = result
+
+	return nil
 }
 
 // JSONIcons represents the icons attached to a block.
@@ -135,6 +169,7 @@ func convertJSONBlock(jsonBlock *JSONBlock, varMap map[string]string) (*Block, e
 	block := &Block{
 		Type:       jsonBlock.Type,
 		ID:         jsonBlock.ID,
+		Disabled:   jsonBlock.Disabled || len(jsonBlock.DisabledReasons) > 0,
 		Fields:     make(map[string]*Field),
 		Values:     make(map[string]*Value),
 		Statements: make(map[string]*Statement),
