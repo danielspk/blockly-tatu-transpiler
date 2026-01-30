@@ -9,6 +9,7 @@ type Workspace struct {
 type Block struct {
 	Type       string
 	ID         string
+	Comment    string
 	Fields     map[string]*Field
 	Values     map[string]*Value
 	Statements map[string]*Statement

@@ -31,6 +31,7 @@ type JSONBlock struct {
 	Inputs     map[string]JSONInput `json:"inputs,omitempty"`
 	Next       *JSONBlockWrapper    `json:"next,omitempty"`
 	ExtraState *JSONExtraState      `json:"extraState,omitempty"`
+	Icons      *JSONIcons           `json:"icons,omitempty"`
 }
 
 // JSONInput represents an input connection.
@@ -47,6 +48,19 @@ type JSONBlockWrapper struct {
 type JSONExtraState struct {
 	Name   string   `json:"name,omitempty"`
 	Params []string `json:"params,omitempty"`
+}
+
+// JSONIcons represents the icons attached to a block.
+type JSONIcons struct {
+	Comment *JSONComment `json:"comment,omitempty"`
+}
+
+// JSONComment represents a comment attached to a block.
+type JSONComment struct {
+	Text   string `json:"text"`
+	Pinned bool   `json:"pinned,omitempty"`
+	Height int    `json:"height,omitempty"`
+	Width  int    `json:"width,omitempty"`
 }
 
 // UnmarshalJSON workaround for handle `extraState` as string or object.
@@ -124,6 +138,10 @@ func convertJSONBlock(jsonBlock *JSONBlock, varMap map[string]string) (*Block, e
 		Fields:     make(map[string]*Field),
 		Values:     make(map[string]*Value),
 		Statements: make(map[string]*Statement),
+	}
+
+	if jsonBlock.Icons != nil && jsonBlock.Icons.Comment != nil {
+		block.Comment = jsonBlock.Icons.Comment.Text
 	}
 
 	for name, value := range jsonBlock.Fields {

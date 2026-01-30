@@ -217,6 +217,16 @@ func transpileBlockInternal(block *Block, processNext bool) (string, error) {
 		return "", fmt.Errorf("transpilation error for block type '%s' (ID: %s): %w", block.Type, block.ID, err)
 	}
 
+	if block.Comment != "" {
+		commentPrefix := ""
+
+		for _, line := range strings.Split(block.Comment, "\n") {
+			commentPrefix += "; " + line + "\n"
+		}
+
+		result = commentPrefix + result
+	}
+
 	if processNext && block.Next != nil {
 		nextCode, err := transpileBlockInternal(block.Next, true)
 		if err != nil {
