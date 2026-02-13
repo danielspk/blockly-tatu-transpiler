@@ -49,6 +49,7 @@ func transpileIf(block *Block) (string, error) {
 	}
 
 	elseStatement := block.Statements["ELSE"]
+	hasElse := false
 
 	if elseStatement != nil {
 		elseStatements, err := transpileBlockSequence(elseStatement.Block)
@@ -57,14 +58,20 @@ func transpileIf(block *Block) (string, error) {
 		}
 
 		elseCode = getBodyCode(elseStatements)
-	} else {
-		elseCode = "nil"
+		hasElse = true
 	}
 
-	result := elseCode
+	var result string
+	if hasElse {
+		result = elseCode
+	}
 
 	for i := len(conditions) - 1; i >= 0; i-- {
-		result = fmt.Sprintf("(if %s\n%s\n%s)", conditions[i], indent(thenBranches[i]), indent(result))
+		if result != "" {
+			result = fmt.Sprintf("(if %s\n%s\n%s)", conditions[i], indent(thenBranches[i]), indent(result))
+		} else {
+			result = fmt.Sprintf("(if %s\n%s)", conditions[i], indent(thenBranches[i]))
+		}
 	}
 
 	return result, nil
@@ -145,7 +152,7 @@ func transpileWhileUntil(block *Block) (string, error) {
 	bodyCode = wrapWithFlowControl(bodyCode, hasBreak, hasContinue)
 
 	if mode == "UNTIL" {
-		cond = fmt.Sprintf("(if %s false true)", cond)
+		cond = fmt.Sprintf("(not %s)", cond)
 	}
 
 	cond = modifyLoopCondition(cond, hasBreak)

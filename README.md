@@ -98,7 +98,7 @@ logic_operation: true AND false
 → (and true false)
 
 logic_negate: NOT true
-→ (if true false true)
+→ (not true)
 
 logic_ternary: if true then "yes" else "no"
 → (if true "yes" "no")
@@ -111,8 +111,7 @@ logic_null: null
 ```
 controls_if: if x > 5 then print("big")
 → (if (> x 5)
-     (print "big")
-     nil)
+     (print "big"))
 
 controls_repeat_ext: repeat 10 times
 → (begin
@@ -124,6 +123,10 @@ controls_repeat_ext: repeat 10 times
 
 controls_whileUntil: while x < 10
 → (while (< x 10)
+     [body])
+
+controls_whileUntil: until x >= 10
+→ (while (not (>= x 10))
      [body])
 
 controls_for: for i from 0 to 10 by 1

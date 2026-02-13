@@ -615,6 +615,45 @@ func TestTranspileIfWithComments(t *testing.T) {
 	}
 }
 
+// TestTranspileIfWithoutElse tests if block without else branch.
+func TestTranspileIfWithoutElse(t *testing.T) {
+	jsonData := `{
+		"blocks": {
+			"languageVersion": 0,
+			"blocks": [{
+				"type": "controls_if",
+				"id": "if1",
+				"inputs": {
+					"IF0": {"block": {"type": "logic_boolean", "id": "bool1", "fields": {"BOOL": "TRUE"}}},
+					"DO0": {"block": {"type": "text_print", "id": "print1", "inputs": {"TEXT": {"block": {"type": "text", "id": "text1", "fields": {"TEXT": "then"}}}}}}
+				}
+			}]
+		}
+	}`
+
+	result, err := Transpile([]byte(jsonData))
+	if err != nil {
+		t.Fatalf("Transpile failed: %v", err)
+	}
+
+	if !strings.Contains(result, "(if true") {
+		t.Errorf("Expected if statement, got: %s", result)
+	}
+	if !strings.Contains(result, `"then"`) {
+		t.Errorf("Expected then branch, got: %s", result)
+	}
+
+	if strings.Contains(result, "nil") {
+		t.Errorf("Expected no nil (else should be optional), got: %s", result)
+	}
+
+	openParens := strings.Count(result, "(")
+	closeParens := strings.Count(result, ")")
+	if openParens != closeParens {
+		t.Errorf("Unbalanced parentheses: %d open vs %d close in: %s", openParens, closeParens, result)
+	}
+}
+
 // TestTranspileExpression tests expression_tatu block.
 func TestTranspileExpression(t *testing.T) {
 	jsonData := `{

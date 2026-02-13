@@ -82,14 +82,14 @@ func transpileOperation(block *Block) (string, error) {
 
 // transpileNegate transpiles a NOT block.
 // Blockly: logic_negate
-// Tatu: (if x false true)
+// Tatu: (not x)
 func transpileNegate(block *Block) (string, error) {
 	value, err := transpileUnaryOp(block, "BOOL")
 	if err != nil {
 		return "", err
 	}
 
-	return fmt.Sprintf("(if %s false true)", value), nil
+	return fmt.Sprintf("(not %s)", value), nil
 }
 
 // transpileTernary transpiles a ternary operator block.

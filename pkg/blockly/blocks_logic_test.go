@@ -124,7 +124,7 @@ func TestTranspileLogicNegate(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(if true false true)") {
+	if !strings.Contains(result, "(not true)") {
 		t.Errorf("Expected negation expression, got: %s", result)
 	}
 }
