@@ -193,8 +193,8 @@ func TestTranspileProcedureDefNoReturnWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	firstCount := strings.Count(result, `"first"`)
@@ -245,8 +245,8 @@ func TestTranspileProcedureDefReturnWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	calculatingCount := strings.Count(result, `"calculating"`)

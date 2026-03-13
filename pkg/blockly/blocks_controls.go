@@ -79,7 +79,7 @@ func transpileIf(block *Block) (string, error) {
 
 // transpileRepeat transpiles a repeat block.
 // Blockly: controls_repeat_ext with TIMES value
-// Tatu: (var i 0) (while (< i n) (begin ... (set i (+ i 1))))
+// Tatu: (var i 0) (while (< i n) (block ... (set i (+ i 1))))
 func transpileRepeat(block *Block) (string, error) {
 	var bodyCode string
 
@@ -103,14 +103,14 @@ func transpileRepeat(block *Block) (string, error) {
 	bodyCode = getBodyCode(doStatements)
 	loopVar := "__i"
 
-	whileBody := fmt.Sprintf("(begin\n%s\n%s)",
+	whileBody := fmt.Sprintf("(block\n%s\n%s)",
 		indent(bodyCode),
 		indent(fmt.Sprintf("(set %s (+ %s 1))", loopVar, loopVar)))
 
 	whileLoop := fmt.Sprintf("(while (< %s %s)\n%s)",
 		loopVar, times, indent(whileBody))
 
-	return fmt.Sprintf("(begin\n%s\n%s)",
+	return fmt.Sprintf("(block\n%s\n%s)",
 		indent(fmt.Sprintf("(var %s 0)", loopVar)),
 		indent(whileLoop)), nil
 }
@@ -261,7 +261,7 @@ func transpileForEach(block *Block) (string, error) {
 	bodyCode = getBodyCode(doStatements)
 	indexVar := "__i_foreach"
 
-	forBody := fmt.Sprintf("(begin\n%s\n%s\n%s)",
+	forBody := fmt.Sprintf("(block\n%s\n%s\n%s)",
 		indent(fmt.Sprintf("(set %s (vec:get %s %s))", varName, list, indexVar)),
 		indent(bodyCode),
 		indent(fmt.Sprintf("(set %s (+ %s 1))", indexVar, indexVar)))
@@ -271,7 +271,7 @@ func transpileForEach(block *Block) (string, error) {
 		indent(fmt.Sprintf("(< %s (vec:len %s))", indexVar, list)),
 		indent(forBody))
 
-	return fmt.Sprintf("(begin\n%s\n%s)",
+	return fmt.Sprintf("(block\n%s\n%s)",
 		indent(fmt.Sprintf("(var %s %s)", varName, "nil")),
 		indent(forLoop)), nil
 }
@@ -333,7 +333,7 @@ func wrapWithFlowControl(bodyCode string, hasBreak, hasContinue bool) string {
 	}
 
 	if hasContinue && !hasBreak {
-		return fmt.Sprintf("(begin\n%s\n%s)",
+		return fmt.Sprintf("(block\n%s\n%s)",
 			indent("(set __continue false)"),
 			indent(fmt.Sprintf("(if (not __continue)\n%s)", indent(bodyCode))))
 	}
@@ -342,7 +342,7 @@ func wrapWithFlowControl(bodyCode string, hasBreak, hasContinue bool) string {
 		return fmt.Sprintf("(if (not __break)\n%s)", indent(bodyCode))
 	}
 
-	return fmt.Sprintf("(begin\n%s\n%s)",
+	return fmt.Sprintf("(block\n%s\n%s)",
 		indent("(set __continue false)"),
 		indent(fmt.Sprintf("(if (and (not __break) (not __continue))\n%s)", indent(bodyCode))))
 }
@@ -362,7 +362,7 @@ func addFlowControlVars(code string, hasBreak, hasContinue bool) string {
 		vars += indent("(var __continue false)") + "\n"
 	}
 
-	return fmt.Sprintf("(begin\n%s%s)", vars, code)
+	return fmt.Sprintf("(block\n%s%s)", vars, code)
 }
 
 // modifyLoopCondition modifies a loop condition to check for break flag.
@@ -396,7 +396,7 @@ func transpileExpression(block *Block) (string, error) {
 	return transpileUnaryOp(block, "VALUE")
 }
 
-// getBodyCode wraps statements in begin expression if needed.
+// getBodyCode wraps statements in block expression if needed.
 func getBodyCode(doStatements []string) string {
 	if len(doStatements) == 0 {
 		return "nil"
@@ -412,17 +412,17 @@ func getBodyCode(doStatements []string) string {
 		return strings.Join(doStatements, "\n")
 	}
 
-	beginBody := ""
+	blockBody := ""
 
 	for i, stmt := range statementsToWrap {
 		if i > 0 {
-			beginBody += "\n"
+			blockBody += "\n"
 		}
 
-		beginBody += indent(stmt)
+		blockBody += indent(stmt)
 	}
 
-	result := fmt.Sprintf("(begin\n%s)", beginBody)
+	result := fmt.Sprintf("(block\n%s)", blockBody)
 
 	if firstIsComment {
 		result = doStatements[0] + "\n" + result

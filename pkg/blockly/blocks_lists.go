@@ -258,11 +258,11 @@ func transpileListsRepeat(block *Block) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf(`(begin
+	return fmt.Sprintf(`(block
   (var __result (vector))
   (var __i 0)
   (while (< __i %s)
-    (begin
+    (block
       (set __result (vec:push __result %s))
       (set __i (+ __i 1))))
   __result)`, num, item), nil

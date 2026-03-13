@@ -114,10 +114,10 @@ controls_if: if x > 5 then print("big")
      (print "big"))
 
 controls_repeat_ext: repeat 10 times
-→ (begin
+→ (block
      (var __i 0)
      (while (< __i 10)
-       (begin
+       (block
          [body]
          (set __i (+ __i 1)))))
 
@@ -130,19 +130,19 @@ controls_whileUntil: until x >= 10
      [body])
 
 controls_for: for i from 0 to 10 by 1
-→ (begin
+→ (block
      (var i 0)
      (while (<= i 10)
-       (begin
+       (block
          [body]
          (set i (+ i 1)))))
 
 controls_forEach: for item in list
-→ (begin
+→ (block
      (var item nil)
      (for (var __i_foreach 0)
           (< __i_foreach (vec:len list))
-          (begin
+          (block
             (set item (vec:get list __i_foreach))
             [body]
             (set __i_foreach (+ __i_foreach 1)))))

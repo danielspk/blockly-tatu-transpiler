@@ -284,8 +284,8 @@ func TestTranspileIfWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	firstCount := strings.Count(result, `"first"`)
@@ -402,8 +402,8 @@ func TestTranspileWhileWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	loop1Count := strings.Count(result, `"loop1"`)
@@ -452,8 +452,8 @@ func TestTranspileForWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	iterationCount := strings.Count(result, `"iteration"`)
@@ -494,8 +494,8 @@ func TestTranspileRepeatWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	repeat1Count := strings.Count(result, `"repeat1"`)
@@ -545,8 +545,8 @@ func TestTranspileForEachWithMultipleStatements(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if !strings.Contains(result, "(begin") {
-		t.Errorf("Expected begin for multiple statements, got: %s", result)
+	if !strings.Contains(result, "(block") {
+		t.Errorf("Expected block for multiple statements, got: %s", result)
 	}
 
 	processedCount := strings.Count(result, `"processed"`)
@@ -555,7 +555,7 @@ func TestTranspileForEachWithMultipleStatements(t *testing.T) {
 	}
 }
 
-// TestTranspileIfWithComments tests that comments don't cause unnecessary begin wrappers.
+// TestTranspileIfWithComments tests that comments don't cause unnecessary block wrappers.
 func TestTranspileIfWithComments(t *testing.T) {
 	jsonData := `{
 		"blocks": {
@@ -598,8 +598,8 @@ func TestTranspileIfWithComments(t *testing.T) {
 		t.Fatalf("Transpile failed: %v", err)
 	}
 
-	if strings.Contains(result, "(begin") {
-		t.Errorf("Expected no begin wrapper for comment + single statement, got: %s", result)
+	if strings.Contains(result, "(block") {
+		t.Errorf("Expected no block wrapper for comment + single statement, got: %s", result)
 	}
 
 	if !strings.Contains(result, "; then branch") {

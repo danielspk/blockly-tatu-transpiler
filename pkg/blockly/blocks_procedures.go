@@ -7,14 +7,14 @@ import (
 
 // transpileProcedureDefNoReturn transpiles a procedure definition without return value.
 // Blockly: procedures_defnoreturn with NAME field, mutation args, and STACK statement
-// Tatu: (def name (param1 param2) (begin expr1 expr2 ...))
+// Tatu: (def name (param1 param2) (block expr1 expr2 ...))
 func transpileProcedureDefNoReturn(block *Block) (string, error) {
 	return transpileProcedureDefinition(block, false, "procedures_defnoreturn")
 }
 
 // transpileProcedureDefReturn transpiles a procedure definition with return value.
 // Blockly: procedures_defreturn with NAME field, mutation args, STACK statement, and RETURN value
-// Tatu: (def name (param1 param2) (begin expr1 expr2 ... return value))
+// Tatu: (def name (param1 param2) (block expr1 expr2 ... return value))
 func transpileProcedureDefReturn(block *Block) (string, error) {
 	return transpileProcedureDefinition(block, true, "procedures_defreturn")
 }
@@ -64,7 +64,7 @@ func transpileProcedureDefinition(block *Block, hasReturnValue bool, blockTypeNa
 			bodyCode = finalReturnExpression
 		} else {
 			allStatements := append(statements, finalReturnExpression)
-			bodyCode = fmt.Sprintf("(begin\n%s)", joinStatements(allStatements))
+			bodyCode = fmt.Sprintf("(block\n%s)", joinStatements(allStatements))
 		}
 	} else {
 		if len(statements) == 0 {
@@ -72,7 +72,7 @@ func transpileProcedureDefinition(block *Block, hasReturnValue bool, blockTypeNa
 		} else if len(statements) == 1 {
 			bodyCode = statements[0]
 		} else {
-			bodyCode = fmt.Sprintf("(begin\n%s)", joinStatements(statements))
+			bodyCode = fmt.Sprintf("(block\n%s)", joinStatements(statements))
 		}
 	}
 
